@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    show-sql: false
+  liquibase:
+    enabled: true
+
+salonplan:
+  jwt:
+    issuer: salonplan-test
+    secret: test-secret-with-at-least-thirty-two-characters
+    access-token-minutes: 5
+  cors:
+    allowed-origins: http://localhost:4200
+  bootstrap:
+    admin-email: admin@test.local
+    admin-password: admin-test-password
+    employee-email: employee@test.local
+    employee-password: employee-test-password
+  mail:
+    enabled: false
+    from: no-reply@test.local
