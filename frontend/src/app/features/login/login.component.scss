@@ -1,0 +1,111 @@
+.login-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(420px, 0.85fr);
+  min-height: 100dvh;
+  background: var(--surface);
+}
+
+.login-visual {
+  position: relative;
+  display: flex;
+  align-items: end;
+  padding: clamp(7rem, 12vw, 10rem) clamp(2rem, 7vw, 7rem) clamp(3rem, 7vw, 6rem);
+  overflow: hidden;
+  color: white;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.18), transparent 25%),
+    radial-gradient(circle at 85% 70%, rgba(255, 214, 196, 0.22), transparent 27%),
+    linear-gradient(145deg, #7e3143 0%, #a94f62 52%, #d48c82 100%);
+}
+
+.login-visual::after {
+  position: absolute;
+  right: -12%;
+  bottom: -24%;
+  width: 60%;
+  aspect-ratio: 1;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 55px rgba(255, 255, 255, 0.04),
+    0 0 0 110px rgba(255, 255, 255, 0.025);
+  content: '';
+}
+
+.visual-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+}
+
+.visual-copy h1 {
+  max-width: 12ch;
+  margin: 0.8rem 0 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 6vw, 5.8rem);
+  font-weight: 600;
+  line-height: 0.98;
+}
+
+.visual-copy p {
+  max-width: 55ch;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1.08rem;
+}
+
+.feature-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-top: 2rem;
+  font-weight: 650;
+}
+
+.login-panel {
+  display: grid;
+  place-items: center;
+  padding: 7rem clamp(1.25rem, 5vw, 5rem) 3rem;
+}
+
+.login-card {
+  width: min(440px, 100%);
+}
+
+.login-card h2 {
+  margin: 0.4rem 0 0.25rem;
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+}
+
+.login-card form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.security-note {
+  margin-top: 1.25rem;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 900px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-visual {
+    min-height: 36vh;
+    padding: 7rem 1.5rem 2.5rem;
+  }
+
+  .visual-copy h1 {
+    max-width: 16ch;
+    font-size: clamp(2.4rem, 11vw, 4.2rem);
+  }
+
+  .login-panel {
+    padding-top: 3rem;
+  }
+}

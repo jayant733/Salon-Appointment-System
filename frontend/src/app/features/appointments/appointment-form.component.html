@@ -1,0 +1,148 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">{{
+      editing() ? 'Terminbearbeitung' : 'Verfügbarkeit prüfen & buchen'
+    }}</span>
+    <h1>{{ title() }}</h1>
+    <p>
+      {{
+        editing()
+          ? 'Wähle einen neuen Mitarbeiter, eine Leistung oder Startzeit.'
+          : 'Endzeit und Buchbarkeit werden vom Backend verbindlich berechnet.'
+      }}
+    </p>
+  </div>
+</section>
+
+@if (loading()) {
+  <section class="card loading-state">
+    <span class="spinner"></span> Formulardaten werden geladen …
+  </section>
+} @else {
+  <section class="form-layout">
+    <form class="card form-card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-grid">
+        <label class="full">
+          <span>Kunde</span>
+          <select formControlName="customerId">
+            <option [ngValue]="null">Bitte auswählen</option>
+            @for (customer of customers(); track customer.id) {
+              <option [ngValue]="customer.id">
+                {{ customer.firstName }} {{ customer.lastName
+                }}{{ customer.active ? '' : ' (inaktiv)' }}
+              </option>
+            }
+          </select>
+          @if (form.controls.customerId.touched && form.controls.customerId.invalid) {
+            <small class="field-error">Bitte wähle einen Kunden.</small>
+          }
+        </label>
+
+        <label>
+          <span>Mitarbeiter</span>
+          <select formControlName="employeeId" (change)="loadSlots()">
+            <option [ngValue]="null">Bitte auswählen</option>
+            @for (employee of employees(); track employee.id) {
+              <option [ngValue]="employee.id">
+                {{ employee.firstName }} {{ employee.lastName }}
+              </option>
+            }
+          </select>
+        </label>
+
+        <label>
+          <span>Leistung</span>
+          <select formControlName="serviceId" (change)="loadSlots()">
+            <option [ngValue]="null">Bitte auswählen</option>
+            @for (service of services(); track service.id) {
+              <option [ngValue]="service.id">
+                {{ service.name }} ·
+                {{ service.price | currency: 'EUR' : 'symbol' : '1.2-2' : 'de' }}
+              </option>
+            }
+          </select>
+        </label>
+
+        <label>
+          <span>Datum</span>
+          <input type="date" formControlName="date" (change)="loadSlots()" />
+        </label>
+
+        <label>
+          <span>Freie Startzeit</span>
+          <select formControlName="startTime">
+            <option value="">
+              {{ slotsLoading() ? 'Freie Zeiten werden geladen …' : 'Bitte auswählen' }}
+            </option>
+            @for (slot of slots(); track slot) {
+              <option [value]="slot">{{ slot | date: 'HH:mm' }} Uhr</option>
+            }
+          </select>
+          @if (
+            !slotsLoading() &&
+            form.controls.employeeId.value &&
+            form.controls.serviceId.value &&
+            slots().length === 0
+          ) {
+            <small class="field-hint warning-copy"
+              >An diesem Tag gibt es keine freien Zeiten.</small
+            >
+          }
+        </label>
+
+        <label class="full">
+          <span>Interne Notiz</span>
+          <textarea
+            rows="4"
+            formControlName="note"
+            placeholder="Optional, maximal 1000 Zeichen"
+          ></textarea>
+          <small class="field-hint">{{ form.controls.note.value.length }}/1000 Zeichen</small>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button class="button ghost" type="button" (click)="cancel()">Abbrechen</button>
+        <button class="button primary" type="submit" [disabled]="saving() || form.invalid">
+          {{ saving() ? 'Speichern …' : editing() ? 'Änderungen speichern' : 'Termin buchen' }}
+        </button>
+      </div>
+    </form>
+
+    <aside class="card summary-card">
+      <span class="eyebrow">Zusammenfassung</span>
+      <h2>{{ selectedService()?.name ?? 'Noch keine Leistung gewählt' }}</h2>
+      @if (selectedService(); as service) {
+        <dl>
+          <div>
+            <dt>Dauer</dt>
+            <dd>{{ service.durationMinutes }} Minuten</dd>
+          </div>
+          <div>
+            <dt>Preis</dt>
+            <dd>{{ service.price | currency: 'EUR' : 'symbol' : '1.2-2' : 'de' }}</dd>
+          </div>
+          @if (form.controls.startTime.value) {
+            <div>
+              <dt>Start</dt>
+              <dd>{{ form.controls.startTime.value | date: 'dd.MM.yyyy, HH:mm' }} Uhr</dd>
+            </div>
+          }
+          @if (estimatedEnd(); as end) {
+            <div>
+              <dt>Voraussichtliches Ende</dt>
+              <dd>{{ end | date: 'HH:mm' }} Uhr</dd>
+            </div>
+          }
+        </dl>
+      } @else {
+        <p class="muted-copy">
+          Nach Auswahl einer Leistung erscheinen hier Dauer, Preis und Endzeit.
+        </p>
+      }
+      <div class="inline-alert info">
+        Das Backend prüft die Verfügbarkeit beim Speichern erneut.
+      </div>
+    </aside>
+  </section>
+}

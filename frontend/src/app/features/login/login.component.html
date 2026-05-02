@@ -1,0 +1,63 @@
+<section class="login-page">
+  <div class="login-visual" aria-hidden="true">
+    <div class="visual-copy">
+      <span class="eyebrow">Salonorganisation ohne Papierchaos</span>
+      <h1>Termine, Kunden und Team an einem Ort.</h1>
+      <p>
+        SalonPlan unterstützt deinen Arbeitsalltag mit einer klaren Kalenderansicht und
+        verlässlicher Verfügbarkeitsprüfung.
+      </p>
+      <div class="feature-row">
+        <span>✓ Terminübersicht</span>
+        <span>✓ Doppelbuchungsschutz</span>
+        <span>✓ Rollen & Rechte</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-panel">
+    <div class="login-card">
+      <span class="eyebrow">Willkommen zurück</span>
+      <h2>Anmelden</h2>
+      <p class="lead">Nutze dein Mitarbeiter- oder Administratorkonto.</p>
+
+      @if (loginError()) {
+        <div class="inline-alert error" role="alert">{{ loginError() }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <label>
+          <span>E-Mail-Adresse</span>
+          <input
+            type="email"
+            formControlName="email"
+            autocomplete="username"
+            placeholder="name@salon.de"
+          />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <small class="field-error">Bitte gib eine gültige E-Mail-Adresse ein.</small>
+          }
+        </label>
+
+        <label>
+          <span>Passwort</span>
+          <input
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+          />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <small class="field-error">Das Passwort ist erforderlich.</small>
+          }
+        </label>
+
+        <button class="button primary wide" type="submit" [disabled]="loading()">
+          {{ loading() ? 'Anmeldung läuft …' : 'Anmelden' }}
+        </button>
+      </form>
+
+      <p class="security-note">Das Zugriffstoken wird nur für diese Browser-Sitzung gespeichert.</p>
+    </div>
+  </div>
+</section>

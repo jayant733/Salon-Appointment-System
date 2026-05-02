@@ -1,0 +1,138 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Kalender & Tagesgeschäft</span>
+    <h1>Termine</h1>
+    <p>{{ totalElements() }} Termine im gewählten Zeitraum.</p>
+  </div>
+  <a class="button primary" routerLink="/appointments/new">+ Neuer Termin</a>
+</section>
+
+<section class="card filter-card">
+  <form class="filter-grid" [formGroup]="filter" (ngSubmit)="load()">
+    <label>
+      <span>Von</span>
+      <input type="date" formControlName="from" />
+    </label>
+    <label>
+      <span>Bis</span>
+      <input type="date" formControlName="to" />
+    </label>
+    <label>
+      <span>Mitarbeiter</span>
+      <select formControlName="employeeId">
+        <option [ngValue]="null">Alle Mitarbeiter</option>
+        @for (employee of employees(); track employee.id) {
+          <option [ngValue]="employee.id">{{ employee.firstName }} {{ employee.lastName }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      <span>Status</span>
+      <select formControlName="status">
+        <option value="">Alle Status</option>
+        <option value="BOOKED">Gebucht</option>
+        <option value="CONFIRMED">Bestätigt</option>
+        <option value="COMPLETED">Abgeschlossen</option>
+        <option value="CANCELLED">Storniert</option>
+      </select>
+    </label>
+    <div class="filter-actions">
+      <button class="button ghost" type="button" (click)="resetFilters()">Zurücksetzen</button>
+      <button class="button secondary" type="submit">Filtern</button>
+    </div>
+  </form>
+</section>
+
+<section class="card table-card" [attr.aria-busy]="loading()">
+  @if (loading()) {
+    <div class="loading-state"><span class="spinner"></span> Termine werden geladen …</div>
+  } @else {
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Zeit</th>
+            <th>Kunde</th>
+            <th>Mitarbeiter</th>
+            <th>Leistung</th>
+            <th>Preis</th>
+            <th>Status</th>
+            <th class="align-right">Aktionen</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (appointment of appointments(); track appointment.id) {
+            <tr [class.muted-row]="appointment.status === 'CANCELLED'">
+              <td class="time-cell">
+                <strong>{{ appointment.startTime | date: 'dd.MM.yyyy' }}</strong>
+                <span
+                  >{{ appointment.startTime | date: 'HH:mm' }}–{{
+                    appointment.endTime | date: 'HH:mm'
+                  }}
+                  Uhr</span
+                >
+              </td>
+              <td>
+                <strong>{{ appointment.customerName }}</strong>
+              </td>
+              <td>{{ appointment.employeeName }}</td>
+              <td>
+                {{ appointment.serviceName }}
+                @if (appointment.note) {
+                  <small class="table-note" [title]="appointment.note">Notiz vorhanden</small>
+                }
+              </td>
+              <td>{{ appointment.price | currency: 'EUR' : 'symbol' : '1.2-2' : 'de' }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class]="'status-badge ' + appointment.status.toLowerCase()"
+                >
+                  {{ statusLabel(appointment.status) }}
+                </span>
+              </td>
+              <td>
+                <div class="row-actions">
+                  @if (appointment.status === 'BOOKED') {
+                    <button class="text-button" type="button" (click)="confirm(appointment)">
+                      Bestätigen
+                    </button>
+                  }
+                  @if (appointment.status === 'CONFIRMED') {
+                    <button class="text-button" type="button" (click)="complete(appointment)">
+                      Abschließen
+                    </button>
+                  }
+                  @if (appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED') {
+                    <button class="text-button" type="button" (click)="edit(appointment)">
+                      Verschieben
+                    </button>
+                    <button class="text-button" type="button" (click)="changeNote(appointment)">
+                      Notiz
+                    </button>
+                    <button
+                      class="text-button danger-text"
+                      type="button"
+                      (click)="cancel(appointment)"
+                    >
+                      Stornieren
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7">
+                <div class="empty-state">
+                  <strong>Keine Termine gefunden</strong>
+                  <span>Ändere den Zeitraum oder erstelle einen neuen Termin.</span>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
