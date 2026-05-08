@@ -1,0 +1,85 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Administration</span>
+    <h1>Mitarbeiter</h1>
+    <p>Buchbare Mitarbeiter verwalten und Aktivstatus steuern.</p>
+  </div>
+  <button class="button primary" type="button" (click)="reset()">+ Neuer Mitarbeiter</button>
+</section>
+
+<section class="master-detail">
+  <div class="card list-panel">
+    <div class="panel-heading">
+      <h2>Team</h2>
+      <span class="count-pill">{{ employees().length }}</span>
+    </div>
+    @if (loading()) {
+      <div class="loading-state"><span class="spinner"></span> Team wird geladen …</div>
+    } @else {
+      <div class="selection-list">
+        @for (employee of employees(); track employee.id) {
+          <article class="selection-item" [class.selected]="editingId() === employee.id">
+            <button class="selection-main" type="button" (click)="edit(employee)">
+              <span class="avatar"
+                >{{ employee.firstName.charAt(0) }}{{ employee.lastName.charAt(0) }}</span
+              >
+              <span>
+                <strong>{{ employee.firstName }} {{ employee.lastName }}</strong>
+                <small>{{ employee.email }}</small>
+              </span>
+            </button>
+            <span class="mini-status" [class.inactive]="!employee.active">{{
+              employee.active ? 'Aktiv' : 'Inaktiv'
+            }}</span>
+          </article>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="card detail-panel">
+    <span class="eyebrow">{{ editingId() ? 'Bearbeiten' : 'Anlegen' }}</span>
+    <h2>{{ editingId() ? 'Mitarbeiterdaten' : 'Neuer Mitarbeiter' }}</h2>
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="form-grid two-columns">
+        <label
+          ><span>Vorname</span><input formControlName="firstName" />
+          @if (serverErrors()['firstName']) {
+            <small class="field-error">{{ serverErrors()['firstName'] }}</small>
+          }
+        </label>
+        <label
+          ><span>Nachname</span><input formControlName="lastName" />
+          @if (serverErrors()['lastName']) {
+            <small class="field-error">{{ serverErrors()['lastName'] }}</small>
+          }
+        </label>
+        <label class="full"
+          ><span>E-Mail</span><input type="email" formControlName="email" />
+          @if (serverErrors()['email']) {
+            <small class="field-error">{{ serverErrors()['email'] }}</small>
+          }
+        </label>
+      </div>
+      <div class="form-actions split-actions">
+        <div>
+          @if (editingId(); as id) {
+            @for (employee of employees(); track employee.id) {
+              @if (employee.id === id) {
+                <button class="button ghost" type="button" (click)="toggleActive(employee)">
+                  {{ employee.active ? 'Deaktivieren' : 'Aktivieren' }}
+                </button>
+              }
+            }
+          }
+        </div>
+        <div class="action-group">
+          <button class="button ghost" type="button" (click)="reset()">Leeren</button>
+          <button class="button primary" type="submit" [disabled]="saving() || form.invalid">
+            {{ saving() ? 'Speichern …' : 'Speichern' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

@@ -1,0 +1,123 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Stammdaten</span>
+    <h1>Kunden</h1>
+    <p>Kunden suchen, Kontaktdaten pflegen und direkt einen Termin anlegen.</p>
+  </div>
+  <button class="button primary" type="button" (click)="reset()">+ Neuer Kunde</button>
+</section>
+
+<section class="master-detail">
+  <div class="card list-panel">
+    <label class="search-field">
+      <span>Kundensuche</span>
+      <input [formControl]="search" placeholder="Name oder E-Mail" autocomplete="off" />
+    </label>
+
+    @if (loading()) {
+      <div class="loading-state"><span class="spinner"></span> Kunden werden geladen …</div>
+    } @else {
+      <div class="selection-list">
+        @for (customer of customers(); track customer.id) {
+          <article class="selection-item" [class.selected]="editingId() === customer.id">
+            <button class="selection-main" type="button" (click)="edit(customer)">
+              <span class="avatar"
+                >{{ customer.firstName.charAt(0) }}{{ customer.lastName.charAt(0) }}</span
+              >
+              <span>
+                <strong>{{ customer.firstName }} {{ customer.lastName }}</strong>
+                <small>{{ customer.email }}</small>
+              </span>
+            </button>
+            <span class="mini-status" [class.inactive]="!customer.active">{{
+              customer.active ? 'Aktiv' : 'Inaktiv'
+            }}</span>
+          </article>
+        } @empty {
+          <div class="empty-state">
+            <strong>Keine Kunden gefunden</strong><span>Probiere einen anderen Suchbegriff.</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="card detail-panel">
+    <div class="panel-heading">
+      <div>
+        <span class="eyebrow">{{ editingId() ? 'Bearbeiten' : 'Anlegen' }}</span>
+        <h2>{{ editingId() ? 'Kundendaten' : 'Neuer Kunde' }}</h2>
+      </div>
+      @if (editingId(); as customerId) {
+        <a
+          class="button secondary compact"
+          routerLink="/appointments/new"
+          [queryParams]="{ customerId }"
+          >Termin anlegen</a
+        >
+      }
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="form-grid two-columns">
+        <label>
+          <span>Vorname</span>
+          <input formControlName="firstName" autocomplete="given-name" />
+          @if (form.controls.firstName.touched && form.controls.firstName.invalid) {
+            <small class="field-error">Vorname ist erforderlich.</small>
+          }
+          @if (serverErrors()['firstName']) {
+            <small class="field-error">{{ serverErrors()['firstName'] }}</small>
+          }
+        </label>
+        <label>
+          <span>Nachname</span>
+          <input formControlName="lastName" autocomplete="family-name" />
+          @if (form.controls.lastName.touched && form.controls.lastName.invalid) {
+            <small class="field-error">Nachname ist erforderlich.</small>
+          }
+          @if (serverErrors()['lastName']) {
+            <small class="field-error">{{ serverErrors()['lastName'] }}</small>
+          }
+        </label>
+        <label>
+          <span>E-Mail</span>
+          <input type="email" formControlName="email" autocomplete="email" />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <small class="field-error">Gültige E-Mail erforderlich.</small>
+          }
+          @if (serverErrors()['email']) {
+            <small class="field-error">{{ serverErrors()['email'] }}</small>
+          }
+        </label>
+        <label>
+          <span>Telefon</span>
+          <input formControlName="phone" autocomplete="tel" />
+          @if (serverErrors()['phone']) {
+            <small class="field-error">{{ serverErrors()['phone'] }}</small>
+          }
+        </label>
+      </div>
+
+      <div class="form-actions split-actions">
+        <div>
+          @if (editingId(); as id) {
+            @for (customer of customers(); track customer.id) {
+              @if (customer.id === id) {
+                <button class="button ghost" type="button" (click)="toggleActive(customer)">
+                  {{ customer.active ? 'Deaktivieren' : 'Aktivieren' }}
+                </button>
+              }
+            }
+          }
+        </div>
+        <div class="action-group">
+          <button class="button ghost" type="button" (click)="reset()">Leeren</button>
+          <button class="button primary" type="submit" [disabled]="saving()">
+            {{ saving() ? 'Speichern …' : 'Speichern' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

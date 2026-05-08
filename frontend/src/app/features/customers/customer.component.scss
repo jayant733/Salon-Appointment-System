@@ -1,0 +1,32 @@
+.search-field {
+  margin-bottom: 1rem;
+}
+
+.list-panel {
+  min-height: 520px;
+}
+
+.detail-panel {
+  align-self: start;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.panel-heading h2 {
+  margin: 0.25rem 0 0;
+}
+
+.split-actions {
+  justify-content: space-between;
+}
+
+.action-group {
+  display: flex;
+  gap: 0.65rem;
+}

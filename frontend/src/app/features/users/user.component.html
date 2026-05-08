@@ -1,0 +1,62 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Berechtigungen</span>
+    <h1>Benutzerkonten</h1>
+    <p>Rollen und Zugriffsstatus interner Konten verwalten.</p>
+  </div>
+</section>
+
+<section class="card table-card">
+  @if (loading()) {
+    <div class="loading-state"><span class="spinner"></span> Benutzerkonten werden geladen …</div>
+  } @else {
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>E-Mail</th>
+            <th>Rolle</th>
+            <th>Status</th>
+            <th>Erstellt</th>
+            <th class="align-right">Aktion</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr [class.muted-row]="!user.enabled">
+              <td>
+                <strong>{{ user.email }}</strong>
+              </td>
+              <td>
+                <select
+                  class="inline-select"
+                  [value]="user.role"
+                  (change)="changeRole(user, $any($event.target).value)"
+                >
+                  <option value="EMPLOYEE">Mitarbeiter</option>
+                  <option value="ADMIN">Administrator</option>
+                </select>
+              </td>
+              <td>
+                <span class="mini-status" [class.inactive]="!user.enabled">{{
+                  user.enabled ? 'Aktiv' : 'Deaktiviert'
+                }}</span>
+              </td>
+              <td>{{ user.createdAt | date: 'dd.MM.yyyy' }}</td>
+              <td class="align-right">
+                <button
+                  class="text-button"
+                  [class.danger-text]="user.enabled"
+                  type="button"
+                  (click)="toggleEnabled(user)"
+                >
+                  {{ user.enabled ? 'Deaktivieren' : 'Aktivieren' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

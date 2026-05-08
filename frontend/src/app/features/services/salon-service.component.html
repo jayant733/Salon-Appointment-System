@@ -1,0 +1,94 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Administration</span>
+    <h1>Leistungen</h1>
+    <p>Angebot, Dauer, Preis und Buchbarkeit pflegen.</p>
+  </div>
+  <button class="button primary" type="button" (click)="reset()">+ Neue Leistung</button>
+</section>
+
+<section class="master-detail">
+  <div class="card list-panel">
+    <div class="panel-heading">
+      <h2>Leistungskatalog</h2>
+      <span class="count-pill">{{ services().length }}</span>
+    </div>
+    @if (loading()) {
+      <div class="loading-state"><span class="spinner"></span> Leistungen werden geladen …</div>
+    } @else {
+      <div class="selection-list">
+        @for (service of services(); track service.id) {
+          <article class="selection-item" [class.selected]="editingId() === service.id">
+            <button class="selection-main" type="button" (click)="edit(service)">
+              <span class="service-icon">✦</span>
+              <span>
+                <strong>{{ service.name }}</strong>
+                <small
+                  >{{ service.durationMinutes }} Min. ·
+                  {{ service.price | currency: 'EUR' : 'symbol' : '1.2-2' : 'de' }}</small
+                >
+              </span>
+            </button>
+            <span class="mini-status" [class.inactive]="!service.active">{{
+              service.active ? 'Aktiv' : 'Inaktiv'
+            }}</span>
+          </article>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="card detail-panel">
+    <span class="eyebrow">{{ editingId() ? 'Bearbeiten' : 'Anlegen' }}</span>
+    <h2>{{ editingId() ? 'Leistungsdaten' : 'Neue Leistung' }}</h2>
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="form-grid two-columns">
+        <label class="full"
+          ><span>Name</span><input formControlName="name" />
+          @if (serverErrors()['name']) {
+            <small class="field-error">{{ serverErrors()['name'] }}</small>
+          }
+        </label>
+        <label class="full"
+          ><span>Beschreibung</span><textarea rows="4" formControlName="description"></textarea>
+          @if (serverErrors()['description']) {
+            <small class="field-error">{{ serverErrors()['description'] }}</small>
+          }
+        </label>
+        <label
+          ><span>Dauer (Minuten)</span
+          ><input type="number" min="5" max="480" formControlName="durationMinutes" />
+          @if (serverErrors()['durationMinutes']) {
+            <small class="field-error">{{ serverErrors()['durationMinutes'] }}</small>
+          }
+        </label>
+        <label
+          ><span>Preis (EUR)</span
+          ><input type="number" min="0" step="0.01" formControlName="price" />
+          @if (serverErrors()['price']) {
+            <small class="field-error">{{ serverErrors()['price'] }}</small>
+          }
+        </label>
+      </div>
+      <div class="form-actions split-actions">
+        <div>
+          @if (editingId(); as id) {
+            @for (service of services(); track service.id) {
+              @if (service.id === id) {
+                <button class="button ghost" type="button" (click)="toggleActive(service)">
+                  {{ service.active ? 'Deaktivieren' : 'Aktivieren' }}
+                </button>
+              }
+            }
+          }
+        </div>
+        <div class="action-group">
+          <button class="button ghost" type="button" (click)="reset()">Leeren</button>
+          <button class="button primary" type="submit" [disabled]="saving() || form.invalid">
+            {{ saving() ? 'Speichern …' : 'Speichern' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
