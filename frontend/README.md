@@ -73,3 +73,25 @@ The bundled `nginx.conf` expects a backend service named `backend` on port `8080
 - **Customer Directory:** Full customer CRUD operations with search and appointment history.
 - **Administration Panels:** Complete management views for staff members, services catalog, and user permissions.
 - **UI & UX:** Modern responsive interface with toast notifications and optimistic concurrency support.
+
+---
+
+## Modern SPA Architecture & Vue.js Interoperability
+
+SalonPlan's frontend follows modern Single Page Application (SPA) design patterns that seamlessly translate across modern JavaScript/TypeScript frameworks such as **Vue.js 3** and **React**.
+
+### Framework Parity: Angular 22 vs. Vue 3
+
+| Concept | Angular 22 Implementation | Vue 3 (Composition API) Equivalent |
+|---|---|---|
+| **Reactivity** | Angular Signals (`signal()`), RxJS `BehaviorSubject` | Vue 3 `ref()`, `reactive()`, `computed()` |
+| **State Sharing** | Injectable services (`providedIn: 'root'`) | Pinia Stores (`defineStore`) and Composables |
+| **Component Structure** | TypeScript class with HTML template and CSS/SCSS | `<script setup lang="ts">` Single File Components (SFC) |
+| **HTTP Interception** | `HttpInterceptorFn` injecting `Authorization: Bearer <token>` | Axios / Fetch request interceptors |
+| **Navigation Protection** | `canActivate` functional route guards (`AuthGuard`, `AdminGuard`) | Vue Router `beforeEach()` navigation guards |
+
+### Vue 3 Reference Client (`frontend/vue-client/`)
+
+A reference implementation illustrating how the SalonPlan Spring Boot REST API is consumed in Vue 3 is provided in [`vue-client/`](./vue-client/):
+- **`useAppointments.ts`**: A Vue 3 Composable handling reactive state, 15-minute slot availability queries, and appointment submission.
+- **`AppointmentBooking.vue`**: A Vue 3 Single File Component (SFC) implementing reactive stylist selection, real-time availability slot rendering, and appointment booking.

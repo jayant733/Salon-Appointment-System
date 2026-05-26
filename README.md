@@ -51,6 +51,29 @@
 
 ---
 
+## Modern SPA Architecture & Vue.js Interoperability
+
+While SalonPlan's primary client is implemented using **Angular 22**, the platform was designed with strict framework-agnostic architecture. The Spring Boot backend exposes a clean, stateless REST API secured with JWT, enabling seamless integration with any modern Single Page Application (SPA) framework such as **Vue.js 3** or **React**.
+
+### Architectural Framework Mapping: Angular 22 vs. Vue 3
+
+| Architectural Concern | Angular 22 Implementation | Vue 3 (Composition API) Equivalent |
+|---|---|---|
+| **Reactivity & State** | RxJS Observables, Angular Signals (`signal()`), BehaviorSubjects | Vue 3 `ref()`, `reactive()`, `computed()`, and Pinia Stores |
+| **Component Logic** | TypeScript Class components with `@Component` decorators | `<script setup lang="ts">` Single File Components (SFC) |
+| **HTTP Interception** | `HttpInterceptorFn` adding `Bearer <token>` headers | Axios request/response interceptors or Fetch wrappers |
+| **Routing & Protection** | Angular Router `canActivate` functional guards (`AuthGuard`, `AdminGuard`) | Vue Router `beforeEach((to, from, next) => ...)` navigation guards |
+| **Template Directives** | Built-in control flow (`@if`, `@for`), event binding `(click)` | Vue Directives (`v-if`, `v-for`, `v-model`, `@click`) |
+| **Dependency Injection** | Hierarchical Dependency Injection (`@Injectable`) | Vue `provide()` / `inject()` or modular Composables |
+
+### Vue 3 Reference Client (`frontend/vue-client/`)
+
+A working reference client demonstrating modern Vue 3 patterns against the SalonPlan Spring Boot backend is provided in [`frontend/vue-client/`](./frontend/vue-client/):
+- **`useAppointments.ts`**: Vue 3 Composable managing reactive appointment state, 15-minute slot availability queries, and appointment submission.
+- **`AppointmentBooking.vue`**: Vue 3 Single File Component (SFC) featuring reactive stylist selection, real-time slot grid rendering, and appointment booking.
+
+---
+
 ## System Architecture
 
 ```text
@@ -73,6 +96,7 @@ salonplan-spring-angular/
 │   ├── src/app/
 │   │   ├── core/               # Guards, interceptors, API clients, token store
 │   │   └── features/           # Appointments, customers, employees, services, login
+│   ├── vue-client/             # Vue 3 reference client (composable & booking SFC)
 │   ├── angular.json
 │   ├── package.json
 │   └── proxy.conf.json         # Dev proxy forwarding to port 8080
